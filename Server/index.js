@@ -4,7 +4,7 @@ import connectToDB from "./dbConnection.js";
 
 const app = express();
 const Port = 3000;
-const __dirname = path.resolve(); // Resolve current directory
+const __dirname = path.resolve();
 
 
 app.use(express.urlencoded({ extended: true }));
@@ -23,7 +23,17 @@ app.use(async (req, res, next) => {
 });
 
 app.get("/", (req, res) => {
-    res.render("home");
+    res.render("login");
+});
+
+app.post("/login", async (req, res) => {
+    const { username, password } = req.body;
+    const user = await req.db.collection("users").findOne({ username, password });
+    if (user) {
+        res.render("home");
+    } else {
+        res.send("Invalid username or password.");
+    }
 });
 
 
