@@ -35,7 +35,27 @@ app.post("/login", async (req, res) => {
         res.send("Invalid username or password.");
     }
 });
+app.get('/home', (req, res) => {
+    res.render('home'); 
+  });
+  app.get('/hiking', (req, res) => {
+    res.render('hiking'); 
+  });
+  
 
+  app.get('/cities', (req, res) => {
+    res.render('cities'); 
+  });
+  
+  
+  app.get('/islands', (req, res) => {
+    res.render('islands'); 
+  });
+  
+
+  app.get('/wanttogo', (req, res) => {
+    res.render('wanttogo'); 
+  });
 
 app.listen(Port, () => {
     console.log(`Server is running on http://localhost:${Port}`);
