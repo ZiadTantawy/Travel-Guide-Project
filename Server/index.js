@@ -43,7 +43,6 @@ app.use(async (req, res, next) => {
     }
 });
 
-
 app.get("/", (req, res) => {
     res.render("login");
 });
@@ -90,9 +89,9 @@ app.get("/santorini",(req,res)=>{
 })
 app.post("/add-to-want-to-go-list", async(req,res)=>{
     const { destination } = req.body;
-    const username= req.session.username;
+    const username= req.session.user.username;
     try{
-        const user=await req.db.collection("myCollection").findOne({ _id: username });
+        const user = await req.db.collection("myCollection").findOne({ username });
         if (!user) {
             return res.status(404).send("User not found.");
         }
@@ -100,7 +99,7 @@ app.post("/add-to-want-to-go-list", async(req,res)=>{
             return res.status(400).send("This destination is already in your want-to-go list.");
         }
         await req.db.collection("myCollection").updateOne(
-            { _id: username },
+            { username },
             { $addToSet: { wantToGoList: destination } }
         );
         res.send("Successfully added to your want-to-go list!");
