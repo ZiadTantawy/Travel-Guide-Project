@@ -40,3 +40,25 @@ app.post("/login", async (req, res) => {
 app.listen(Port, () => {
     console.log(`Server is running on http://localhost:${Port}`);
 });
+// Serve registration form
+app.get("/registration", (req, res) => {
+    res.render("registration"); // Serve the registration form from 'views/register.ejs'
+});
+
+// Handle registration
+app.post("/register", async (req, res) => {
+    const { username, password } = req.body;
+
+    try {
+        const existingUser = await req.db.collection("myCollection").findOne({ username });
+        if (existingUser) {
+            res.send("Username already exists. Please choose a different one.");
+        } else {
+            await req.db.collection("myCollection").insertOne({ username, password });
+            res.render("home");
+        }
+    } catch (err) {
+        console.error("Error during registration:", err);
+        res.status(500).send("An error occurred during registration. Please try again later.");
+    }
+});
