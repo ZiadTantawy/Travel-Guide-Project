@@ -38,5 +38,23 @@
             </form>
         </div>
     </nav>
+    <h1>Search Results</h1>
+    <div class="container">
+        <div class="row">
+            <% for (let i = 0; i < destinations.length; i++) { %>
+                <div class="col-4">
+                    <a href="/<%=destinations[i].name%>">
+                        <div class="card mb-4" style="width: 18rem;">
+                            <img src="/images/<%= destinations[i].name %>" class="card-img-top" alt="<%= destinations[i].name %>">
+                            <div class="card-body">
+                                <h5 class="card-title"><%= destinations[i].name %></h5>
+                                <p class="card-text">Discover the beauty of <%= destinations[i].name %>!</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            <% } %>
+        </div>
+    </div>
 </body>
 </html>
