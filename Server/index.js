@@ -158,9 +158,9 @@ app.get('/wanttogo', (req, res) => {
 app.listen(Port, () => {
     console.log(`Server is running on http://localhost:${Port}`);
 });
-// Serve registration form
+
 app.get("/registration", (req, res) => {
-    res.render("registration"); // Serve the registration form from 'views/register.ejs'
+    res.render("registration");
 });
 
 // Handle registration
@@ -172,7 +172,9 @@ app.post("/register", async (req, res) => {
         if (existingUser) {
             res.send("Username already exists. Please choose a different one.");
         } else {
-            await req.db.collection("myCollection").insertOne({ username, password });
+            const user = {username,password}
+            await req.db.collection("myCollection").insertOne(user);
+            req.session.user = user;
             res.render("home");
         }
     } catch (err) {
