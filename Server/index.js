@@ -151,9 +151,40 @@ app.get('/islands', (req, res) => {
 });
 
 
-app.get('/wanttogo', (req, res) => {
-  res.render('wanttogo'); 
-});
+// app.get('/wanttogo', function(req, res) {
+//     const user1 = req.session.user.username;
+//     req.db.collection('myCollection')
+//       .find({username: user1})
+//       .toArray()
+//       .then((data) => {      
+//         res.render('wanttogo', { items: data });
+//       })
+//       .catch((err) => {
+//         console.error('Error fetching data', err);
+//         res.status(500).send('Error fetching data');
+//       });
+//   });
+
+app.get('/wanttogo', function (req, res) {
+    const user1 = req.session.user.username;
+  
+    req.db.collection('myCollection')
+      .findOne({ username: user1 })
+      .then((user) => {
+        if (!user) {
+          return res.status(404).send("User not found.");
+        }
+  
+        const wantToGoList = user.wantToGoList || []; // Get wantToGoList or an empty array if it doesn't exist
+        res.render('wanttogo', { items: wantToGoList }); // Pass only the wantToGoList array
+      })
+      .catch((err) => {
+        console.error('Error fetching data', err);
+        res.status(500).send('Error fetching data');
+      });
+  });
+  
+  
 
 app.listen(Port, () => {
     console.log(`Server is running on http://localhost:${Port}`);
