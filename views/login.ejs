@@ -42,6 +42,9 @@
             <input type="submit" value="Login">
         </form>
         <br>
+        <% if (typeof error !== 'undefined' && error) { %>
+            <p style="color: red;"><%= error %></p>
+        <% } %>
         <a href="registration">I dont have an account</a>
     </div>
 </body>

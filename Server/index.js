@@ -27,7 +27,6 @@ app.get("/images/:name", (req, res) => {
     const imagePath = path.join(__dirname, "../public", req.params.name + ".png");
     res.sendFile(imagePath, (err) => {
         if (err) {
-            console.error("Error serving image:", err);
             res.status(404).send("Image not found");
         }
     });
@@ -49,43 +48,68 @@ app.get("/", (req, res) => {
 
 app.post("/", async (req, res) => {
     const { username, password } = req.body;
-    try{
-        const user = await req.db.collection("myCollection").findOne({username: username, password: password});
-        if(user){
+    try {
+        const user = await req.db.collection("myCollection").findOne({ username, password });
+        if (user) {
             req.session.user = user;
             res.render("home");
-        }else{
-            res.send("Invalid username or password");
+        } else {
+            res.render("login", { error: "Invalid username or password" });
         }
-    }catch(err){
+    } catch (err) {
         console.log(err);
         res.send("An error occurred while logging in.");
     }
 });
 
+
 app.get("/inca",(req,res)=>{
     const youtubeVideoLink = "https://www.youtube.com/embed/PThD_KgLXUA?si=fIbKv0aUBFc59GTs";
-    res.render("inca", { youtubeLink: youtubeVideoLink });
+    if(req.session.user){
+        res.render("inca", { youtubeLink: youtubeVideoLink });
+    }else{
+        res.render("login");
+    }
 })
 app.get("/annapurna",(req,res)=>{
     const youtubeVideoLink = "https://www.youtube.com/embed/Ec-wj56Zp-Q?si=3TNaHSG16pqpk4db" ;
-    res.render("annapurna", { youtubeLink: youtubeVideoLink });
+    if(req.session.user){
+        res.render("annapurna", { youtubeLink: youtubeVideoLink });
+    }else{
+        res.render("login");
+    }
 })
 app.get("/paris",(req,res)=>{
     const youtubeVideoLink = "https://www.youtube.com/embed/6JAESY0by04?si=Z00lBbQQviZFigHn" ;
-    res.render("paris", { youtubeLink: youtubeVideoLink });
+    if(req.session.user){
+        res.render("paris", { youtubeLink: youtubeVideoLink });
+    }else{
+        res.render("login");
+    }
 })
 app.get("/rome",(req,res)=>{
     const youtubeVideoLink = "https://www.youtube.com/embed/2x16HZIzsKQ?si=DoAL33zjFEXAdMq9";
-    res.render("rome", { youtubeLink: youtubeVideoLink });
+    if(req.session.user){
+        res.render("rome", { youtubeLink: youtubeVideoLink });
+    }else{
+        res.render("login");
+    }
 })
 app.get("/bali",(req,res)=>{
     const youtubeVideoLink = "https://www.youtube.com/embed/Dw-Bhwf-ozI?si=32zEoU9bYlrfdPTw";
-    res.render("bali", { youtubeLink: youtubeVideoLink });
+    if(req.session.user){
+        res.render("bali", { youtubeLink: youtubeVideoLink });
+    }else{
+        res.render("login");
+    }
 })
 app.get("/santorini",(req,res)=>{
     const youtubeVideoLink = "https://www.youtube.com/embed/MUIMSBomVUA?si=LEdcwG15vG-e4XNq" ;
-    res.render("santorini",{ youtubeLink: youtubeVideoLink });
+    if(req.session.user){
+        res.render("santorini", { youtubeLink: youtubeVideoLink });
+    }else{
+        res.render("login");
+    }
 })
 app.post("/add-to-want-to-go-list", async(req,res)=>{
     const { destination } = req.body;
@@ -134,36 +158,37 @@ app.post("/search", async (req, res) => {
     }
 });
 app.get('/home', (req, res) => {
-  res.render('home'); 
+    if(req.session.user){
+        res.render('home'); 
+    }else{
+        res.send("Please login first.");
+    }
 });
 app.get('/hiking', (req, res) => {
-  res.render('hiking'); 
+    if(req.session.user){
+        res.render('hiking'); 
+    }else{
+        res.render("login");
+    }
 });
 
 
 app.get('/cities', (req, res) => {
-  res.render('cities'); 
+    if(req.session.user){
+        res.render('cities'); 
+    }else{
+        res.render("login");
+    } 
 });
 
 
 app.get('/islands', (req, res) => {
-  res.render('islands'); 
+    if(req.session.user){
+        res.render('islands'); 
+    }else{
+        res.render("login");
+    } 
 });
-
-
-// app.get('/wanttogo', function(req, res) {
-//     const user1 = req.session.user.username;
-//     req.db.collection('myCollection')
-//       .find({username: user1})
-//       .toArray()
-//       .then((data) => {      
-//         res.render('wanttogo', { items: data });
-//       })
-//       .catch((err) => {
-//         console.error('Error fetching data', err);
-//         res.status(500).send('Error fetching data');
-//       });
-//   });
 
 app.get('/wanttogo', function (req, res) {
     const user1 = req.session.user.username;
@@ -175,8 +200,8 @@ app.get('/wanttogo', function (req, res) {
           return res.status(404).send("User not found.");
         }
   
-        const wantToGoList = user.wantToGoList || []; // Get wantToGoList or an empty array if it doesn't exist
-        res.render('wanttogo', { items: wantToGoList }); // Pass only the wantToGoList array
+        const wantToGoList = user.wantToGoList || [];
+        res.render('wanttogo', { items: wantToGoList });
       })
       .catch((err) => {
         console.error('Error fetching data', err);
@@ -193,8 +218,6 @@ app.listen(Port, () => {
 app.get("/registration", (req, res) => {
     res.render("registration");
 });
-
-// Handle registration
 app.post("/register", async (req, res) => {
     const { username, password } = req.body;
 
@@ -205,8 +228,7 @@ app.post("/register", async (req, res) => {
         } else {
             const user = {username,password}
             await req.db.collection("myCollection").insertOne(user);
-            req.session.user = user;
-            res.render("home");
+            res.render("login");
         }
     } catch (err) {
         console.error("Error during registration:", err);
