@@ -228,7 +228,7 @@ app.post("/register", async (req, res) => {
         } else {
             const user = {username,password}
             await req.db.collection("myCollection").insertOne(user);
-            res.render("login");
+            res.redirect("/");
         }
     } catch (err) {
         console.error("Error during registration:", err);
