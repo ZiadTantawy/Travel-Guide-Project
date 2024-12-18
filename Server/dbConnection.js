@@ -31,7 +31,18 @@ export default async function connectToDB() {
             } else {
                 console.log(`Collection '${"Destinations"}' already exists.`);
             }
-        }
+
+            const collection= await db.listCollections({name:"myCollection"}).toArray();
+            if (collection.length===0){
+                await db.createCollection("myCollection");
+                console.log(`Collection '${"myCollection"}' created successfully.`);
+            } else{
+                console.log(`Collection '${"myCollection"}' already exists.`);
+                
+            }
+
+            }
+        
         return db;
     } catch (err) {
         console.error("Error connecting to MongoDB or creating collection:", err);
